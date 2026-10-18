@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101a32">
+  <title>USA Quick Quiz Challenge</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #101a32;
+      color: #f5f7fc;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --muted: #aab6ce;
+      --accent: #ff647c;
+      --blue: #7196ff;
+      --panel: #192642;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 28px 16px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(ellipse at 12% 5%, rgba(113, 150, 255, .15), transparent 34rem),
+        radial-gradient(ellipse at 90% 95%, rgba(255, 100, 124, .12), transparent 30rem),
+        #101a32;
+    }
+
+    button { font: inherit; }
+
+    .quiz-card {
+      width: min(100%, 540px);
+      padding: clamp(24px, 6vw, 40px);
+      border: 1px solid rgba(255, 255, 255, .09);
+      border-radius: 24px;
+      background: linear-gradient(155deg, rgba(29, 44, 74, .98), rgba(22, 34, 58, .98));
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .35);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 10px;
+      color: #c3cce0;
+      font-size: .75rem;
+      font-weight: 750;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .flag { font-size: 1.2rem; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 6vw, 2.4rem);
+      letter-spacing: -.045em;
+      line-height: 1.12;
+    }
+
+    .intro {
+      margin: 12px 0 28px;
+      color: var(--muted);
+      font-size: .98rem;
+      line-height: 1.6;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      color: #d0d8e9;
+      font-size: .85rem;
+      font-weight: 650;
+    }
+
+    .score-chip {
+      padding: 6px 11px;
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .05);
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      height: 7px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), #a18bff);
+      transition: width .3s ease;
+    }
+
+    .question {
+      margin: 0 0 20px;
+      font-size: clamp(1.15rem, 4vw, 1.4rem);
+      letter-spacing: -.02em;
+      line-height: 1.45;
+    }
+
+    .answers {
+      display: grid;
+      gap: 11px;
+    }
+
+    .answer {
+      width: 100%;
+      min-height: 54px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, .045);
+      color: #f5f7fc;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .16s ease, background .16s ease, transform .16s ease;
+    }
+
+    .answer:hover:not(:disabled), .answer:focus-visible {
+      border-color: rgba(139, 166, 255, .8);
+      background: rgba(113, 150, 255, .13);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .answer:disabled { cursor: default; opacity: 1; }
+    .answer.correct { border-color: #47c994; background: rgba(71, 201, 148, .14); }
+    .answer.incorrect { border-color: #ff7386; background: rgba(255, 100, 124, .13); }
+
+    .feedback {
+      min-height: 52px;
+      margin: 16px 0 0;
+      color: #cbd5e8;
+      font-size: .93rem;
+      line-height: 1.55;
+    }
+
+    .feedback strong { color: #fff; }
+
+    .next-button, .restart-button {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 14px;
+      border: 0;
+      border-radius: 13px;
+      background: var(--accent);
+      color: #1a1522;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter .16s ease, transform .16s ease;
+    }
+
+    .next-button:hover, .restart-button:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .next-button:focus-visible, .restart-button:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 3px;
+    }
+
+    .results { text-align: center; }
+
+    .results-mark {
+      display: grid;
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 18px;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(113, 150, 255, .15);
+      font-size: 2rem;
+    }
+
+    .results h2 {
+      margin: 0;
+      font-size: 1.8rem;
+      letter-spacing: -.035em;
+    }
+
+    .results p {
+      margin: 12px 0 6px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .final-score {
+      display: block;
+      margin: 18px 0 4px;
+      color: #fff;
+      font-size: 2.8rem;
+      font-weight: 850;
+      letter-spacing: -.05em;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="quiz-card" aria-labelledby="page-title">
+    <p class="eyebrow"><span class="flag" aria-hidden="true">ðŸ‡ºðŸ‡¸</span> Quick trivia</p>
+    <h1 id="page-title">USA Quiz Challenge</h1>
+    <p class="intro">Eight quick questions about U.S. history, geography, and symbols. See how many you know.</p>
+
+    <section id="quiz" aria-label="Quiz">
+      <div class="meta">
+        <span id="question-count">Question 1 of 8</span>
+        <span class="score-chip" id="score-display">Correct: 0</span>
+      </div>
+      <div class="progress-track" id="progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <h2 class="question" id="question" tabindex="-1"></h2>
+      <div class="answers" id="answers"></div>
+      <p class="feedback" id="feedback" aria-live="polite"></p>
+      <button class="next-button" id="next-button" type="button" hidden>Next question</button>
+    </section>
+
+    <section class="results" id="results" aria-live="polite" hidden></section>
+    <p class="sr-only" id="announcement" aria-live="polite"></p>
+  </main>
+
+  <script>
+    "use strict";
+
+    const quizData = [
+      {
+        question: "What is the capital of the United States?",
+        options: ["New York City", "Washington, D.C.", "Los Angeles", "Chicago"],
+        correct: 1,
+        explanation: "Washington, D.C. is the nationâ€™s capital. It is a federal district, not a state."
+      },
+      {
+        question: "Which U.S. state is the largest by area?",
+        options: ["Texas", "California", "Alaska", "Montana"],
+        correct: 2,
+        explanation: "Alaska is the largest state by areaâ€”more than twice the size of Texas."
+      },
+      {
+        question: "How many stars are on the U.S. flag?",
+        options: ["13", "25", "50", "52"],
+        correct: 2,
+        explanation: "The 50 stars represent the 50 states. The 13 stripes represent the original colonies."
+      },
+      {
+        question: "In which state is the Grand Canyon?",
+        options: ["Colorado", "Arizona", "Nevada", "Utah"],
+        correct: 1,
+        explanation: "The Grand Canyon is in northern Arizona, carved by the Colorado River."
+      },
+      {
+        question: "Who was the first president of the United States?",
+        options: ["Thomas Jefferson", "John Adams", "Abraham Lincoln", "George Washington"],
+        correct: 3,
+        explanation: "George Washington served as the first U.S. president from 1789 to 1797."
+      },
+      {
+        question: "What is the national anthem of the United States?",
+        options: ["America the Beautiful", "My Country, â€™Tis of Thee", "The Star-Spangled Banner", "Yankee Doodle"],
+        correct: 2,
+        explanation: "The Star-Spangled Banner became the national anthem in 1931."
+      },
+      {
+        question: "Which country gave the Statue of Liberty to the United States?",
+        options: ["France", "Canada", "Spain", "Italy"],
+        correct: 0,
+        explanation: "France gave the statue to the United States; it was dedicated in New York Harbor in 1886."
+      },
+      {
+        question: "How many states make up the United States?",
+        options: ["48", "49", "50", "51"],
+        correct: 2,
+        explanation: "The United States has 50 states. Alaska and Hawaii became states in 1959."
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const questionCountEl = document.getElementById("question-count");
+    const scoreEl = document.getElementById("score-display");
+    const progressTrackEl = document.getElementById("progress-track");
+    const progressFillEl = document.getElementById("progress-fill");
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const feedbackEl = document.getElementById("feedback");
+    const nextButtonEl = document.getElementById("next-button");
+    const quizEl = document.getElementById("quiz");
+    const resultsEl = document.getElementById("results");
+    const announcementEl = document.getElementById("announcement");
+
+    function loadQuestion() {
+      const question = quizData[currentQuestionIndex];
+      answered = false;
+      questionCountEl.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+      scoreEl.textContent = `Correct: ${score}`;
+      progressTrackEl.setAttribute("aria-valuenow", String(currentQuestionIndex));
+      progressFillEl.style.width = `${(currentQuestionIndex / quizData.length) * 100}%`;
+      questionEl.textContent = question.question;
+      answersEl.replaceChildren();
+      feedbackEl.textContent = "";
+      nextButtonEl.hidden = true;
+
+      question.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "answer";
+        button.textContent = option;
+        button.addEventListener("click", () => selectAnswer(index));
+        answersEl.appendChild(button);
+      });
+
+      questionEl.focus();
+    }
+
+    function selectAnswer(selectedIndex) {
+      if (answered) return;
+      answered = true;
+      const question = quizData[currentQuestionIndex];
+      const buttons = [...answersEl.querySelectorAll("button")];
+      const isCorrect = selectedIndex === question.correct;
+
+      buttons.forEach((button, index) => {
+        button.disabled = true;
+        if (index === question.correct) button.classList.add("correct");
+        if (index === selectedIndex && !isCorrect) button.classList.add("incorrect");
+      });
+
+      if (isCorrect) score += 1;
+      scoreEl.textContent = `Correct: ${score}`;
+      feedbackEl.replaceChildren();
+      const result = document.createElement("strong");
+      result.textContent = isCorrect ? "Correct! " : "Not quite. ";
+      feedbackEl.append(result, document.createTextNode(question.explanation));
+      announcementEl.textContent = `${isCorrect ? "Correct." : "Incorrect."} ${question.explanation}`;
+      nextButtonEl.textContent = currentQuestionIndex === quizData.length - 1 ? "See results" : "Next question";
+      nextButtonEl.hidden = false;
+      nextButtonEl.focus();
+    }
+
+    function showResults() {
+      quizEl.hidden = true;
+      resultsEl.hidden = false;
+      progressTrackEl.setAttribute("aria-valuenow", String(quizData.length));
+      progressFillEl.style.width = "100%";
+
+      const percentage = Math.round((score / quizData.length) * 100);
+      const message = score === quizData.length
+        ? "Perfect score! You know your U.S. trivia."
+        : score >= 5
+          ? "Nice workâ€”you know your U.S. trivia."
+          : "Good start. Play again and see what you remember.";
+
+      resultsEl.replaceChildren();
+      const mark = document.createElement("div");
+      mark.className = "results-mark";
+      mark.setAttribute("aria-hidden", "true");
+      mark.textContent = score >= 5 ? "ðŸŽ‰" : "ðŸ—½";
+      const heading = document.createElement("h2");
+      heading.textContent = "Quiz complete!";
+      const total = document.createElement("span");
+      total.className = "final-score";
+      total.textContent = `${score} / ${quizData.length}`;
+      const details = document.createElement("p");
+      details.textContent = `${percentage}% correct`;
+      const messageEl = document.createElement("p");
+      messageEl.textContent = message;
+      const restartButton = document.createElement("button");
+      restartButton.className = "restart-button";
+      restartButton.type = "button";
+      restartButton.textContent = "Play again";
+      restartButton.addEventListener("click", restartGame);
+      resultsEl.append(mark, heading, total, details, messageEl, restartButton);
+      restartButton.focus();
+    }
+
+    function restartGame() {
+      currentQuestionIndex = 0;
+      score = 0;
+      resultsEl.hidden = true;
+      quizEl.hidden = false;
+      loadQuestion();
+    }
+
+    nextButtonEl.addEventListener("click", () => {
+      currentQuestionIndex += 1;
+      if (currentQuestionIndex < quizData.length) loadQuestion();
+      else showResults();
+    });
+
+    loadQuestion();
+  </script>
+</body>
+</html>

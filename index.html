@@ -233,7 +233,7 @@
 </head>
 <body>
   <main class="quiz-card" aria-labelledby="page-title">
-    <p class="eyebrow"><span class="flag" aria-hidden="true">ðŸ‡ºðŸ‡¸</span> Quick trivia</p>
+    <p class="eyebrow"><span class="flag" aria-hidden="true">🇺🇸</span> Quick trivia</p>
     <h1 id="page-title">USA Quiz Challenge</h1>
     <p class="intro">Eight quick questions about U.S. history, geography, and symbols. See how many you know.</p>
 
@@ -263,13 +263,13 @@
         question: "What is the capital of the United States?",
         options: ["New York City", "Washington, D.C.", "Los Angeles", "Chicago"],
         correct: 1,
-        explanation: "Washington, D.C. is the nationâ€™s capital. It is a federal district, not a state."
+        explanation: "Washington, D.C. is the nation’s capital. It is a federal district, not a state."
       },
       {
         question: "Which U.S. state is the largest by area?",
         options: ["Texas", "California", "Alaska", "Montana"],
         correct: 2,
-        explanation: "Alaska is the largest state by areaâ€”more than twice the size of Texas."
+        explanation: "Alaska is the largest state by area—more than twice the size of Texas."
       },
       {
         question: "How many stars are on the U.S. flag?",
@@ -291,7 +291,7 @@
       },
       {
         question: "What is the national anthem of the United States?",
-        options: ["America the Beautiful", "My Country, â€™Tis of Thee", "The Star-Spangled Banner", "Yankee Doodle"],
+        options: ["America the Beautiful", "My Country, ’Tis of Thee", "The Star-Spangled Banner", "Yankee Doodle"],
         correct: 2,
         explanation: "The Star-Spangled Banner became the national anthem in 1931."
       },
@@ -384,14 +384,14 @@
       const message = score === quizData.length
         ? "Perfect score! You know your U.S. trivia."
         : score >= 5
-          ? "Nice workâ€”you know your U.S. trivia."
+          ? "Nice work—you know your U.S. trivia."
           : "Good start. Play again and see what you remember.";
 
       resultsEl.replaceChildren();
       const mark = document.createElement("div");
       mark.className = "results-mark";
       mark.setAttribute("aria-hidden", "true");
-      mark.textContent = score >= 5 ? "ðŸŽ‰" : "ðŸ—½";
+      mark.textContent = score >= 5 ? "🎉" : "🗽";
       const heading = document.createElement("h2");
       heading.textContent = "Quiz complete!";
       const total = document.createElement("span");
